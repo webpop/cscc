@@ -1,0 +1,14 @@
+ Common Sense Code Completion Enhancements
+ 
+ This is a repository based on Q42 Internet B.V. tool for code completion
+ on CodeMirror.
+ 
+ Some fixes are usable only on Webpop, those enhancements are on the "webpop"
+ branch. Standard code is in master, so you only have to clone the repository
+ and you're almost set.
+ 
+ Read the LICENSE for the original Q42 Internet B.V. LICENSE
+ For the license on CodeMirror, see
+ http://marijn.haverbeke.nl/codemirror/LICENSE 
+ 
+ For the Webpop enhanced CSCC we follow the same CSCC license
