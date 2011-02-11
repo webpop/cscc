@@ -1,0 +1,47 @@
+.editbox {
+  margin: .4em;
+  padding: 0;
+  font-family: monospace;
+  font-size: 10pt;
+  color: black;
+}
+
+pre.code, .editbox {
+  color: #666666;
+}
+
+.editbox p {
+  margin: 0;
+}
+
+span.css-at {
+  color: #770088;
+}
+
+span.css-unit {
+  color: #00F;
+}
+
+span.css-value {
+  color: #00F;
+}
+
+span.css-identifier {
+  color: #C00000;
+}
+
+span.css-important {
+  color: #00C000;
+}
+
+span.css-colorcode {
+  color: #004499;
+}
+
+span.css-comment {
+  color: #AA7700;
+}
+
+span.css-string {
+  color: #AA2222;  
+}
