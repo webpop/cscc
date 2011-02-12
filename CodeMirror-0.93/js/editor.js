@@ -1016,6 +1016,8 @@ var Editor = (function(){
     // Mark the node at the cursor dirty when a non-safe key is
     // released.
     keyUp: function(event) {
+      if (this.options.keyUpFunction) 
+        this.options.keyUpFunction(event, select, this);
       this.cursorActivity(isSafeKey(event.keyCode));
     },
 

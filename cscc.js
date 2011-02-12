@@ -1,10 +1,10 @@
-/* CSCC - Common Sense Code Completion 
+/* CSCC - Common Sense Code Completion
 *  Basic but practical code completion for CodeMirror
-* 
+*
 * Written in 2010 by Martin Kool of Q42 to help developers and designers working
 * in quplo (http://quplo.com) reduce the daily amount of keystrokes.
 *
-* The purpose of CSCC is simple; to aid you while you type. It is not meant to be 
+* The purpose of CSCC is simple; to aid you while you type. It is not meant to be
 * a full-fledged code completion engine. CSCC is not context aware, but simply
 * sees what tag you are typing and offers the attributes and possible values.
 *
@@ -43,8 +43,8 @@ var cscc = {
       height: "90%",
       textWrapping: true,
       parserfile: ["parsexml.js", "parsecss.js", "tokenizejavascript.js", "parsejavascript.js", "parsequplo.js"],
-      stylesheet: ["CodeMirror-0.67/css/xmlcolors.css", "CodeMirror-0.67/css/jscolors.css", "CodeMirror-0.67/css/csscolors.css"],
-      path: "CodeMirror-0.67/js/",
+      stylesheet: ["CodeMirror-0.93/css/xmlcolors.css", "CodeMirror-0.93/css/jscolors.css", "CodeMirror-0.93/css/csscolors.css"],
+      path: "CodeMirror-0.93/js/",
       autoMatchParens: false,
       lineNumbers: false,
       cursorActivity: cscc.cursorActivity
@@ -152,7 +152,7 @@ var cscc = {
         var endTag = "</" + tagName + ">";
         if (l.text.indexOf(endTag) == -1) {
           // auto insert closing tag
-          select.insertAtCursor(editor.win, ">" + endTag);
+          select.insertAtCursor(">" + endTag);
           evt.stop();
           select.setCursorPos(editor.container, { node: l.obj.line, offset: l.pos + 1 });
         }
@@ -207,7 +207,7 @@ var cscc = {
     if (!evt.shiftKey && (evt.keyCode == 107 || evt.keyCode == 187)) {
       var p = new csccParseXml(text, l.pos - startPos);
       if (p.state == csccParseXml.inAttributeEquals) {
-        select.insertAtCursor(editor.win, "\"\"");
+        select.insertAtCursor("\"\"");
         select.setCursorPos(editor.container, { node: l.obj.line, offset: l.pos + 1 });
         evt.stop();
         // refresh cursor position and text, so the parser takes into account our added quotes
@@ -348,6 +348,7 @@ var cscc = {
       el = cm.nthLine(line + 1);
       offsetTop = -26;
     }
+
     // hardcode height
     var top = (line - 2) * 16;
     var scrollOffsetTop = cscc.editor.win.document.body.scrollTop;
@@ -362,6 +363,7 @@ var cscc = {
     left -= scrollOffsetLeft;
     cscc.currentLeft = left;
     el.style.left = left + "px";
+
     cscc.visible = true;
     if (!cscc.selected)
       cscc.next();
@@ -500,7 +502,7 @@ var cscc = {
             text = text.substr(cscc.currentParser.propertyName.length);
             text += ": ";
             textOffset = 2;
-            select.insertAtCursor(editor.win, text);
+            select.insertAtCursor(text);
             if (evt.stop) evt.stop();
 
             // when picking the attribute name, reupdate intellisense for possible attribute values
@@ -530,20 +532,20 @@ var cscc = {
             text = text.substr(cscc.currentParser.propertyValue.length);
             text += ";";
             textOffset = 1;
-            select.insertAtCursor(editor.win, text);
+            select.insertAtCursor(text);
             if (evt.stop) evt.stop();
           }
           break;
         case "xml":
           if (cscc.visibleItemsType == 1) {
             text = text.substr(cscc.currentParser.tagName.length);
-            select.insertAtCursor(editor.win, text);
+            select.insertAtCursor(text);
             if (evt.stop) evt.stop();
           }
           if (cscc.visibleItemsType == 2) {
             text = text.substr(cscc.currentParser.attributeName.length);
             text += "=\"\"";
-            select.insertAtCursor(editor.win, text);
+            select.insertAtCursor(text);
             select.setCursorPos(editor.container, { node: l.obj.line, offset: l.pos + text.length - 1 });
             if (evt.stop) evt.stop();
 
@@ -559,7 +561,7 @@ var cscc = {
           }
           if (cscc.visibleItemsType == 3) {
             text = text.substr(cscc.currentParser.attributeValue.length);
-            select.insertAtCursor(editor.win, text);
+            select.insertAtCursor(text);
             select.setCursorPos(editor.container, { node: l.obj.line, offset: l.pos + text.length + 1 });
             if (evt.stop) evt.stop();
           }
