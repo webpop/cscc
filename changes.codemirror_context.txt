@@ -1,0 +1,6 @@
+CSCC - Common Sense Code Completion
+
+Changes to the codemirror 0.93 core for context saving
+
+Please use the repository diff tools to see the changes. There are many, and
+it's difficult to list here all the changes one by one.
