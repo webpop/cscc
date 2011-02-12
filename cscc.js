@@ -342,27 +342,16 @@ var cscc = {
       cscc.selected = null;
     cscc.fill(items);
 
-    var el = cscc.editor.nthLine(line);
-    var offsetTop = 0;
-    if (!el) {
-      el = cm.nthLine(line + 1);
-      offsetTop = -26;
-    }
-
-    // hardcode height
-    var top = (line - 2) * 16;
-    var scrollOffsetTop = cscc.editor.win.document.body.scrollTop;
-    var scrollOffsetLeft = cscc.editor.win.document.body.scrollLeft;
-    offsetTop = 5 - scrollOffsetTop;
-
+    // following lines modified by we:willRockYou - CodeMirror now has
+    // it's own methods to get cursorCoords()!
+    // See http://we.willrockyou.net/webEdition-editor-demo/
+    // Also see original comments by Daniel (@we_willRockYou) on Quplog:
+    // http://blog.quplo.com/2010/06/css-code-completion-in-your-browser/
     var el = cscc.getSuggestionsElement();
     el.style.display = "block";
     el.setAttribute("size", items.length);
-    el.style.top = (top + 18 + offsetTop) + "px";
-    var left = cscc.visible ? cscc.currentLeft : ((pos + 1) * 8);
-    left -= scrollOffsetLeft;
-    cscc.currentLeft = left;
-    el.style.left = left + "px";
+    el.style.top = cscc.editor.cursorCoords().y-5 + "px";
+    el.style.left = cscc.editor.cursorCoords().x-7 + "px";
 
     cscc.visible = true;
     if (!cscc.selected)
