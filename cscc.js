@@ -112,14 +112,14 @@ var cscc = {
       case 38: // up
         if (cscc.visible) {
           cscc.prev();
-          evt.stop()
+          evt.stop();
           return false;
         }
         break;
       case 40: // down
         if (cscc.visible) {
           cscc.next();
-          evt.stop()
+          evt.stop();
           return false;
         }
         break;
@@ -133,14 +133,17 @@ var cscc = {
       case 27: // escape
         if (cscc.visible) {
           cscc.hide();
-          evt.stop()
+          evt.stop();
           return false;
         }
         break;
     }
 
     // if we're not inside a tag, keydown is finished
-    if (!inTag) return true;
+    if (!inTag) {
+      cscc.hide();
+      return true;
+    }
 
     // get the tagName that we're in
     text = text.substr(startPos + 1);
@@ -197,7 +200,6 @@ var cscc = {
         cscc.update(l, parser, evt, select, editor);
       }
       return;
-
     }
 
     text = text.substr(startPos + 1);
@@ -249,11 +251,7 @@ var cscc = {
 
   // returns the object, or when it is a function returns its resulting object
   getValueOrFunctionResult: function(obj) {
-    try {
-      var functionResult = obj();
-      return functionResult;
-    } catch (e) { }
-    return obj;
+    return (typeof obj == "function") ? obj() : obj;
   },
 
   // parses the sensePath and gets the items for it
