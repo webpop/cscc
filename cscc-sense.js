@@ -168,27 +168,11 @@ var csccSense =
 
       // but if they have some attributes to suggest, they don't need to return 1
       // and simply return an object with those attributes, returning 2
-      "link": {
+      "script": {
         // however, this attribute wants to return values, so again it returns an
         // object, containing values that are marked as 3
-        "type": { "text/css": 3, "image/png": 3, "image/jpeg": 3, "image/gif": 3 },
-        "rel": { "stylesheet": 3, "icon": 3 },
-        "href": 2,
-        "media": { "all": 3, "screen": 3, "print": 3 }
-      },
-      "script": {
         "type": { "text/javascript": 3 },
         "src": 2
-      },
-      "title": 1,
-      "style": {
-        "type": { "text/css": 3 },
-        "media": { "all": 3, "screen": 3, "print": 3 }
-      },
-      "meta": {
-        "name": { "description": 3, "keywords": 3 },
-        "content": { "text/html; charset=UTF-8": 3 },
-        "http-equiv": { "content-type": 3 }
       },
       // body returns all common attributes, but shows "onload" as first suggestion
       "body": csccSense.commonAttributes({
@@ -226,13 +210,6 @@ var csccSense =
         "disabled": { "disabled": 3 },
         "readonly": { "readonly": 3 }
       }),
-      "option": {
-        "value": 2,
-        "selected": { "selected": 3 }
-      },
-      "optgroup": {
-        "label": 2
-      },
       "label": csccSense.commonAttributes({
         "for": 2
       }),
@@ -264,6 +241,60 @@ var csccSense =
         "frameborder": { "0": 3 }
       })
     };
+
+    this.xmlContext = {
+      // The context for HTML tags goes backwards from the current tag parent
+      // up to the root. So for <body><p><strong>, the first level of the
+      // context is the closest "strong", then "p" at level 2 and so on.
+      // Tags are then added from this table for all levels up to the root.
+      "head": {
+        // This tag can be at any level for inclusion. (level 0)
+        // Use a number here to anchor the level in which tags from this
+        // entry can be added. In real life, this "level" thing will be
+        // almost always at "0". :-)
+        level: 0,
+        // Stop propagation prevents bubbling up to the root context for
+        // adding tags.
+        stop_propagation: true,
+        // Clear the context tags already used and use only tags from here.
+        // Mainly used to clear proper tags and only use contextual ones.
+        flush: true,
+        // Ok, here comes the tags available only inside a <head> context.
+        tags: {
+          "meta": {
+            "name": { "description": 3, "keywords": 3 },
+            "content": { "text/html; charset=UTF-8": 3 },
+            "http-equiv": { "content-type": 3 }
+          },
+          "link": {
+            "type": { "text/css": 3, "image/png": 3, "image/jpeg": 3, "image/gif": 3 },
+            "rel": { "stylesheet": 3, "icon": 3 },
+            "href": 2,
+            "media": { "all": 3, "screen": 3, "print": 3 }
+          },
+          "style": {
+            "type": { "text/css": 3 },
+            "media": { "all": 3, "screen": 3, "print": 3 }
+          },
+          "title": 1
+        }
+      },
+      "select": {
+        level: 0,
+        stop_propagation: true,
+        flush: true,
+        tags: {
+          "option": {
+            "value": 2,
+            "selected": { "selected": 3 }
+          },
+          "optgroup": {
+            "label": 2
+          }
+        }
+      }
+    };
+
 
     // add the common elements to the dictionary
     for (var i = 0; i < this.commonElements.length; i++)

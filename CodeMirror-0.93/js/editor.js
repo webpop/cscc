@@ -1659,6 +1659,7 @@ var Editor = (function(){
             lineDirty = true;
             // Insert the correct part.
             var newPart = tokenPart(token);
+            if (parsed.context) newPart.parserContext = parsed.context();
             container.insertBefore(newPart, part);
             if (active) active(newPart, token, self);
             var tokensize = token.value.length;

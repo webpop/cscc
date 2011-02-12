@@ -29,6 +29,8 @@ var cscc = {
   currentLeft: 0,
   currentSelect: null,
   currentEditor: null,
+  currentContextTree: null,
+  currentContextElem: null,
   elAtCursor: null,
   editor: null, // the instance of codemirror to complete
 
@@ -97,6 +99,16 @@ var cscc = {
       style.appendChild(cssText);
     }
     document.body.appendChild(style);
+  },
+
+  contextTree: function(node) {
+    var initialContext = node.parserContext && node.parserContext.context;
+    var contextTree = [];
+    while (initialContext) {
+      contextTree.push(initialContext);
+      initialContext = initialContext.prev;
+    }
+    return contextTree;
   },
 
   keyDown: function(evt, select, editor) {
@@ -269,7 +281,30 @@ var cscc = {
       return false;
     }
 
+    function extend(obj, source) {
+      for (var prop in source) obj[prop] = source[prop];
+      return obj;
+    }
+
     var dictionary = csccSense[parser.type + "Dictionary"];
+    var context_dictionary = csccSense[parser.type + "Context"];
+
+    if (context_dictionary && cscc.currentContextTree) {
+      // Add the current context tags.
+      for (var i = 0, l = cscc.currentContextTree.length, bubble = true
+           ; i < l && bubble
+           ; i++) {
+        var context = cscc.currentContextTree[i];
+        var newDict = context_dictionary[context.name];
+        cscc.currentContextElem = context;
+        if (newDict && ((i == newDict.level-1) || (newDict.level == 0))) {
+          var newValues = cscc.getValueOrFunctionResult(newDict.tags);
+          dictionary = newDict.flush ? newValues : extend(newValues, dictionary);
+          bubble = !newDict.stop_propagation;
+        }
+      }
+    }
+
     cscc.visibleItemsType = type;
     var items = [];
     var parts = parser.getSensePath().split("/");
@@ -292,7 +327,7 @@ var cscc = {
     }
 
     // if cscc is making sense, prepare the result
-    if (curSense) {
+    if (curSense && typeof curSense == "object") {
       for (var name in curSense) {
         if (!parser.attributes || parser.attributes[name] == null)
           if (isOfType(curSense[name], type))
@@ -370,6 +405,7 @@ var cscc = {
     var items = [];
     switch (parser.type) {
       case "xml":
+        cscc.currentContextTree = cscc.contextTree(cscc.elAtCursor);
         switch (parser.state) {
           case csccParseXml.atStart:
           case csccParseXml.inTagName:

@@ -5,7 +5,7 @@ var QuploParser = Editor.Parser = (function() {
 
   function parseMixed(stream) {
     var htmlParser = XMLParser.make(stream), localParser = null, inTag = false, pageType = false;
-    var iter = { next: top, copy: copy };
+    var iter = { next: top, context: htmlParser.context, copy: copy };
 
     function top() {
       var token = htmlParser.next();

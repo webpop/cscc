@@ -133,7 +133,7 @@ var XMLParser = Editor.Parser = (function() {
     var tokens = tokenizeXML(source), token;
     var cc = [base];
     var tokenNr = 0, indented = 0;
-    var currentTag = null, context = null;
+    var currentTag = null, currentAttr = null, currentAttrs = {}, context = null;
     var consume;
     
     function push(fs) {
@@ -159,9 +159,9 @@ var XMLParser = Editor.Parser = (function() {
       };
     }
 
-    function pushContext(tagname, startOfLine) {
+    function pushContext(tagname, startOfLine, attr) {
       var noIndent = UseKludges.doNotIndent.hasOwnProperty(tagname) || (context && context.noIndent);
-      context = {prev: context, name: tagname, indent: indented, startOfLine: startOfLine, noIndent: noIndent};
+      context = {prev: context, name: tagname, attributes: attr, indent: indented, startOfLine: startOfLine, noIndent: noIndent};
     }
     function popContext() {
       context = context.prev;
@@ -202,6 +202,8 @@ var XMLParser = Editor.Parser = (function() {
     function tagname(style, content) {
       if (style == "xml-name") {
         currentTag = content.toLowerCase();
+        currentAttr = null;
+        currentAttrs = {};
         token.style = "xml-tagname";
         cont();
       }
@@ -221,12 +223,12 @@ var XMLParser = Editor.Parser = (function() {
     function endtag(startOfLine) {
       return function(style, content) {
         if (content == "/>" || (content == ">" && UseKludges.autoSelfClosers.hasOwnProperty(currentTag))) cont();
-        else if (content == ">") {pushContext(currentTag, startOfLine); cont();}
+        else if (content == ">") {pushContext(currentTag, startOfLine, currentAttrs); cont();}
         else {markErr(); cont(arguments.callee);}
       };
     }
-    function attributes(style) {
-      if (style == "xml-name") {token.style = "xml-attname"; cont(attribute, attributes);}
+    function attributes(style, content) {
+      if (style == "xml-name") {token.style = "xml-attname"; currentAttr = content.toLowerCase(); cont(attribute, attributes);}
       else pass();
     }
     function attribute(style, content) {
@@ -234,8 +236,14 @@ var XMLParser = Editor.Parser = (function() {
       else if (content == ">" || content == "/>") pass(endtag);
       else pass();
     }
-    function value(style) {
-      if (style == "xml-attribute") cont(value);
+    function value(style, content) {
+      if (style == "xml-attribute") {
+        if (currentAttr) {
+          currentAttrs[currentAttr] = content.replace(/^["']+|["']+$/g, "");
+          currentAttr = null;
+        }
+        cont(value);
+      }
       else pass();
     }
 
@@ -261,6 +269,14 @@ var XMLParser = Editor.Parser = (function() {
           cc.pop()(token.style, token.content);
           if (consume) return token;
         }
+      },
+
+      context: function(){
+        var _tokenState = tokens.state, _context = context;
+        return {
+          context: _context,
+          tokenState: _tokenState
+        };
       },
 
       copy: function(){
