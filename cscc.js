@@ -327,8 +327,9 @@ var cscc = {
       if (obj == t) return true;
       for (n in obj) {
         if (obj[n] == (t + 1)) return true;
-        for (m in obj[n]) {
-          if (obj[n][m] == (t + 2)) return true;
+        var newObj = cscc.getValueOrFunctionResult(obj[n]);
+        for (m in newObj) {
+          if (newObj[m] == (t + 2)) return true;
         }
       }
       return false;
