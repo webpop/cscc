@@ -34,13 +34,22 @@ var cscc = {
   elAtCursor: null,
   editor: null, // the instance of codemirror to complete
 
+  // Extend function borrowed from Underscore.js
+  // Use external libraries (jQuery, Underscore) if available
+  extend: function(obj, source) {
+    if (typeof _ != "undefined" && _.extend) return _.extend(obj, source);
+    if (typeof $ != "undefined" && $.extend) return $.extend(obj, source);
+    for (var prop in source) obj[prop] = source[prop];
+    return obj;
+  },
+
   // creates the CodeMirror instance
-  init: function(textareaId) {
+  init: function(textareaId, options) {
     cscc.addStyle();
     csccSense.init();
 
     // modify some values below to meet your wishes    
-    var options = {
+    var opts = cscc.extend({
       tabMode: "shift",
       height: "90%",
       textWrapping: true,
@@ -50,12 +59,12 @@ var cscc = {
       autoMatchParens: false,
       lineNumbers: false,
       cursorActivity: cscc.cursorActivity
-    };
+    }, options);
     if (!cscc.IE) {
-      options.keyDownFunction = cscc.keyDown;
-      options.keyUpFunction = cscc.keyUp;
+      opts.keyDownFunction = cscc.keyDown;
+      opts.keyUpFunction = cscc.keyUp;
     }
-    cscc.editor = CodeMirror.fromTextArea(textareaId, options);
+    return cscc.editor = CodeMirror.fromTextArea(textareaId, opts);
   },
 
   cursorActivity: function(elAtCursor) {
@@ -281,11 +290,6 @@ var cscc = {
       return false;
     }
 
-    function extend(obj, source) {
-      for (var prop in source) obj[prop] = source[prop];
-      return obj;
-    }
-
     var dictionary = csccSense[parser.type + "Dictionary"];
     var context_dictionary = csccSense[parser.type + "Context"];
 
@@ -299,7 +303,7 @@ var cscc = {
         cscc.currentContextElem = context;
         if (newDict && ((i == newDict.level-1) || (newDict.level == 0))) {
           var newValues = cscc.getValueOrFunctionResult(newDict.tags);
-          dictionary = newDict.flush ? newValues : extend(newValues, dictionary);
+          dictionary = newDict.flush ? newValues : cscc.extend(newValues, dictionary);
           bubble = !newDict.stop_propagation;
         }
       }
