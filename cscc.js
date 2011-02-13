@@ -55,7 +55,7 @@ var cscc = {
       tabMode: "shift",
       height: "90%",
       textWrapping: true,
-      parserfile: ["parsexml.js", "parsecss.js", "tokenizejavascript.js", "parsejavascript.js", "parsequplo.js"],
+      parserfile: ["parsexmlcontext.js", "parsecss.js", "tokenizejavascript.js", "parsejavascript.js", "parsequplo.js"],
       stylesheet: ["CodeMirror-0.93/css/xmlcolors.css", "CodeMirror-0.93/css/jscolors.css", "CodeMirror-0.93/css/csscolors.css"],
       path: "CodeMirror-0.93/js/",
       autoMatchParens: false,
