@@ -36,7 +36,8 @@ var cscc = {
 
   // Options...
   options: {
-    xhtmlAware: true  // Adds a "/" to self closing tags: ==> <br />
+    dontStyle: false, // if true, do not add a STYLE with the CSS to the document.
+    xhtmlAware: true  // if true, adds a "/" to self closing tags: ==> <br />
   },
 
   // Extend function borrowed from Underscore.js
@@ -67,8 +68,10 @@ var cscc = {
       opts.keyPressFunction = cscc.keyPress;
       opts.keyUpFunction = cscc.keyUp;
     }
+    cscc.options = cscc.extend(cscc.options, opts);
+
     // Don't add styles to the document head if we don't have to
-    if (!opts.dontStyle) cscc.addStyle();
+    if (!cscc.options.dontStyle) cscc.addStyle();
     csccSense.init(opts);
     return cscc.editor = CodeMirror.fromTextArea(textareaId, opts);
   },
@@ -85,7 +88,7 @@ var cscc = {
       "{",
       "  margin-top: 12px;",
       "  position: absolute;",
-      "  z-index: 999;        ",
+      "  z-index: 999;",
       "  font-family: tahoma;",
       "  font-size: 11px;",
       "  border: outset 1px;",
@@ -96,7 +99,7 @@ var cscc = {
       "  -moz-border-radius: 3px;",
       "  cursor:default;",
       "}",
-      "#cmc-suggestions div      ",
+      "#cmc-suggestions div",
       "{",
       "  padding: 2px 5px;",
       "}",
