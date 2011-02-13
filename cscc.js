@@ -59,6 +59,7 @@ var cscc = {
     }, options);
     if (!cscc.IE) {
       opts.keyDownFunction = cscc.keyDown;
+      opts.keyPressFunction = cscc.keyPress;
       opts.keyUpFunction = cscc.keyUp;
     }
     // Don't add styles to the document head if we don't have to
@@ -121,13 +122,6 @@ var cscc = {
   },
 
   keyDown: function(evt, select, editor) {
-    var l = cscc.getCursorInfo();
-    var text = l.text.substr(0, l.pos);
-    var startPos = text.lastIndexOf("<");
-    var endPos = text.lastIndexOf(">");
-    var inTag = startPos > endPos;
-    var brEl = l.obj.line;
-
     // handle basic cursor and other key activity
     switch (evt.keyCode) {
       case 38: // up
@@ -159,19 +153,37 @@ var cscc = {
         }
         break;
     }
+    return true;
+  },
 
-    // if we're not inside a tag, keydown is finished
-    if (!inTag) {
+  keyPress: function(evt, select, editor) {
+    var l = cscc.getCursorInfo();
+    var text = l.text.substr(0, l.pos);
+    var startPos = text.lastIndexOf("<");
+    var endPos = text.lastIndexOf(">");
+    var inTag = startPos > endPos;
+    var character = evt.character;
+
+    if (!inTag && !cscc.isInCssDeclaration(l)) {
       cscc.hide();
       return true;
     }
 
-    // get the tagName that we're in
-    text = text.substr(startPos + 1);
-    var tagName = text.replace(/^([\w\._\-]+).*$/, "$1");
+    // Quote pressed, check if we need to omit end quote.
+    if (character == "'" || character == "\"") {
+      if (l.text[l.pos] == character) {
+        select.setCursorPos(editor.container, { node: l.obj.line, offset: l.pos + 1 });
+        evt.stop();
+        return true;
+      }
+    }
 
-    // ">" pressed, check for autoclosing the tag
-    if (evt.shiftKey && evt.keyCode == 190) {
+    if (character == ">") {
+      // get the tagName that we're in
+      text = text.substr(startPos + 1);
+      var tagName = text.replace(/^([\w\._\-]+).*$/, "$1");
+
+      // ">" pressed, check for autoclosing the tag
       if (text.match(/^[\w\._\-]+.*?$/) && !text.match(/\/$/)) {
         var endTag = "</" + tagName + ">";
         if (l.text.indexOf(endTag) == -1) {
@@ -179,7 +191,28 @@ var cscc = {
           select.insertAtCursor(">" + endTag);
           evt.stop();
           select.setCursorPos(editor.container, { node: l.obj.line, offset: l.pos + 1 });
+          cscc.hide();
         }
+      }
+    }
+
+    // autocomplete quotes, so id= becomes id="" whith cursor properly placed
+    if (character == "=") {
+      text = text.substr(startPos + 1);
+      var p = new csccParseXml(text, l.pos - startPos);
+
+      if (p.state == csccParseXml.inAttributeName) {
+        select.insertAtCursor(character + "\"\"");
+        select.setCursorPos(editor.container, { node: l.obj.line, offset: l.pos + 2 });
+        evt.stop();
+
+        // refresh cursor position and text, so the parser takes into account our added quotes
+        l = cscc.getCursorInfo();
+        text = l.text.substr(startPos + 1);
+
+        // see if we have anything to suggest
+        var parser = new csccParseXml(text, l.pos - startPos - 1);
+        cscc.update(l, parser, evt, select, editor);
       }
     }
     return true;
@@ -225,19 +258,6 @@ var cscc = {
 
     text = text.substr(startPos + 1);
     var tagName = text.replace(/^([\w\._\-]+)[^\/]*$/, "$1");
-
-    // autocomplete quotes, so id= becomes id="" whith cursor properly placed
-    if (!evt.shiftKey && (evt.keyCode == 107 || evt.keyCode == 187)) {
-      var p = new csccParseXml(text, l.pos - startPos);
-      if (p.state == csccParseXml.inAttributeEquals) {
-        select.insertAtCursor("\"\"");
-        select.setCursorPos(editor.container, { node: l.obj.line, offset: l.pos + 1 });
-        evt.stop();
-        // refresh cursor position and text, so the parser takes into account our added quotes
-        l = cscc.getCursorInfo();
-        text = l.text.substr(0, l.pos);
-      }
-    }
 
     // see if we have anything to suggest
     var parser = new csccParseXml(text, l.pos - startPos);

@@ -943,6 +943,9 @@ var Editor = (function(){
     // Check for characters that should re-indent the current line,
     // and prevent Opera from handling enter and tab anyway.
     keyPress: function(event) {
+      if (this.options.keyPressFunction) {
+        if (!this.options.keyPressFunction(event, select, this)) return;
+      }
       var electric = this.options.electricChars && Editor.Parser.electricChars, self = this;
       // Hack for Opera, and Firefox on OS X, in which stopping a
       // keydown event does not prevent the associated keypress event
