@@ -45,10 +45,7 @@ var cscc = {
 
   // creates the CodeMirror instance
   init: function(textareaId, options) {
-    cscc.addStyle();
-    csccSense.init();
-
-    // modify some values below to meet your wishes    
+    // modify some values below to meet your wishes
     var opts = cscc.extend({
       tabMode: "shift",
       height: "90%",
@@ -64,6 +61,9 @@ var cscc = {
       opts.keyDownFunction = cscc.keyDown;
       opts.keyUpFunction = cscc.keyUp;
     }
+    // Don't add styles to the document head if we don't have to
+    if (!opts.dontStyle) cscc.addStyle();
+    csccSense.init(opts);
     return cscc.editor = CodeMirror.fromTextArea(textareaId, opts);
   },
 
