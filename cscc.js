@@ -34,6 +34,11 @@ var cscc = {
   elAtCursor: null,
   editor: null, // the instance of codemirror to complete
 
+  // Options...
+  options: {
+    xhtmlAware: true  // Adds a "/" to self closing tags: ==> <br />
+  },
+
   // Extend function borrowed from Underscore.js
   // Use external libraries (jQuery, Underscore) if available
   extend: function(obj, source) {
@@ -189,7 +194,7 @@ var cscc = {
         if (csccSense.isSelfClose(tagName)) {
           // For autoclose tags we might just let the ">" character slip through
           // but I think it makes much more sense to add the ending slash here.
-          if (!text.match(/\/$/)) {
+          if (!text.match(/\/$/) && cscc.options.xhtmlAware) {
             select.insertAtCursor("/>");
             select.setCursorPos(editor.container, { node: l.obj.line, offset: l.pos + 2 });
             cscc.hide();
