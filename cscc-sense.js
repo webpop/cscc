@@ -27,6 +27,15 @@ var csccSense =
 
   // this is just my custom array of elements that have common attributes and nothing more
   commonElements: "div,p,span,br,hr,h1,h2,h3,h4,h5,h6,blockquote,code,ol,ul,li,fieldset,legend,em,strong,em,dl,dd,dt,pre,q,small,big,sup,sub,thead,tbody,tfoot,tr,th,center".split(","),
+  // autoSelfClosers is taken directly from CodeMirror parsexml.js
+  autoSelfClosers: "br,img,hr,link,input,meta,col,frame,base,area".split(","),
+
+  isSelfClose: function(tagName){
+    for (var i=0, l=csccSense.autoSelfClosers.length; i < l; i++) {
+      if (csccSense.autoSelfClosers[i] == tagName) return true;
+    }
+    return false;
+  },
 
   // This is a simple helper function, and you can create as many as you want.
   // In this case, it simply adds id, class, style and title as attributes, to the
@@ -45,6 +54,7 @@ var csccSense =
       return result;
     }
   },
+
   // upon initialization, fill the dictionary
   init: function() {
 
@@ -294,7 +304,6 @@ var csccSense =
         }
       }
     };
-
 
     // add the common elements to the dictionary
     for (var i = 0; i < this.commonElements.length; i++)

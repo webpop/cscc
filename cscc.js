@@ -174,7 +174,7 @@ var cscc = {
       if (l.text[l.pos] == character) {
         select.setCursorPos(editor.container, { node: l.obj.line, offset: l.pos + 1 });
         evt.stop();
-        return true;
+        return false;
       }
     }
 
@@ -184,14 +184,28 @@ var cscc = {
       var tagName = text.replace(/^([\w\._\-]+).*$/, "$1");
 
       // ">" pressed, check for autoclosing the tag
-      if (text.match(/^[\w\._\-]+.*?$/) && !text.match(/\/$/)) {
-        var endTag = "</" + tagName + ">";
-        if (l.text.indexOf(endTag) == -1) {
-          // auto insert closing tag
-          select.insertAtCursor(">" + endTag);
-          evt.stop();
-          select.setCursorPos(editor.container, { node: l.obj.line, offset: l.pos + 1 });
-          cscc.hide();
+      if (text.match(/^[\w\._\-]+.*?$/)) {
+        // Now look if this tag is auto close...
+        if (csccSense.isSelfClose(tagName)) {
+          // For autoclose tags we might just let the ">" character slip through
+          // but I think it makes much more sense to add the ending slash here.
+          if (!text.match(/\/$/)) {
+            select.insertAtCursor("/>");
+            select.setCursorPos(editor.container, { node: l.obj.line, offset: l.pos + 2 });
+            cscc.hide();
+            evt.stop();
+            return false;
+          }
+        } else {
+          var endTag = "</" + tagName + ">";
+          if (l.text.indexOf(endTag) == -1) {
+            // auto insert closing tag
+            select.insertAtCursor(">" + endTag);
+            select.setCursorPos(editor.container, { node: l.obj.line, offset: l.pos + 1 });
+            cscc.hide();
+            evt.stop();
+            return false;
+          }
         }
       }
     }
@@ -204,7 +218,6 @@ var cscc = {
       if (p.state == csccParseXml.inAttributeName) {
         select.insertAtCursor(character + "\"\"");
         select.setCursorPos(editor.container, { node: l.obj.line, offset: l.pos + 2 });
-        evt.stop();
 
         // refresh cursor position and text, so the parser takes into account our added quotes
         l = cscc.getCursorInfo();
@@ -213,6 +226,9 @@ var cscc = {
         // see if we have anything to suggest
         var parser = new csccParseXml(text, l.pos - startPos - 1);
         cscc.update(l, parser, evt, select, editor);
+
+        evt.stop();
+        return false;
       }
     }
     return true;
