@@ -2,5 +2,14 @@ CSCC - Common Sense Code Completion
 
 Changes to the codemirror 0.93 core for context saving
 
-Please use Git diff tools to see the changes. There are many, and it's
-difficult to list here all changes one by one.
+Please use your favorite diff tool to see the changes. There are many, and
+they are difficult to list here one by one.
+
+Included in the CodeMirror-0.93 directory are the original files for
+editor.js and select.js as editor.js.orig and select.js.orig so you can make
+a diff on those files. On Linux or OSX you can perform:
+
+# diff CodeMirror-0.93/js/editor.js CodeMirror-0.93/js/editor.js.orig
+# diff CodeMirror-0.93/js/select.js CodeMirror-0.93/js/select.js.orig
+
+To view changes made on the original sources.

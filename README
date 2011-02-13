@@ -2,13 +2,47 @@
  
  This is a repository based on Q42 Internet B.V. tool for code completion
  on CodeMirror.
+
+ Enhacements included in this repository:
  
- Some fixes are usable only on Webpop, those enhancements are on the "webpop"
- branch. Standard code is in master, so you only have to clone the repository
- and you're almost set.
+ - Updated CodeMirror to 0.93
+ - Added context aware tags, so you will get suggestions based on previous
+   outer tags. For example, you will only get "optgroup" and "option" inside
+   a "select". Currently, the only supported tags are "head" (for meta, link,
+   style and title) and "select" (for optgroup and option).
+ - Added an additional "options" parameter to the cscc.init function so that
+   you can configure the CodeMirror instance.
+ - Added an option "dontStyle" so that cscc doesn't add a hardcode <style>
+   into the document. (You need to style the cscc popup if you activate this
+   option)
+ - Fixed the autocomplete quotes to work on international keyboards.
+ - Added support for "smart quotes". Since autocompletion automatically adds
+   quotes, you might type a quote again to end an attribute value. With smart
+   quotes, the editor won't add a new quote if the following character is
+   an ending quote.
+ - Added support for auto closed tags, so that you don't get a <img></img>
+   ending tag. You can configure the addition of the optional html slash
+   (ie: <br/>) using the "xhtmlAware" option.
+
+ Small fixes
+
+ - Fixes to clear the CSCC popup in certain situations, like deleting back
+   the tag with the backspace.
+ - Fixes for auto tag close and autocomplete quotes. They were not working in
+   Firefox due to international keyboard layouts
+   (Read: Firefox vs. event.keyCode :-).
+ - Added support for cscc to use the CodeMirror own cursorCoords method.
+   (Thanks to we:willRockYou)
+   See original comments by Daniel (@we_willRockYou) on Quplog:
+   http://blog.quplo.com/2010/06/css-code-completion-in-your-browser/
+ - Small code cleanups.
+
+ Some other fixes are usable only on Webpop, those enhancements are on the
+ "webpop" branch. Standard code is in master, so you only have to clone the
+ repository and you're almost set.
  
  Read the LICENSE for the original Q42 Internet B.V. LICENSE
  For the license on CodeMirror, see
  http://marijn.haverbeke.nl/codemirror/LICENSE 
  
- For the Webpop enhanced CSCC we follow the same CSCC license
+ We follow the same CSCC license for the Webpop enhanced CSCC
