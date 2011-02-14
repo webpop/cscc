@@ -189,7 +189,7 @@ var cscc = {
     if (character == ">") {
       // get the tagName that we're in
       text = text.substr(startPos + 1);
-      var tagName = text.replace(/^([\w\._\-]+).*$/, "$1");
+      var tagName = text.replace(/^([\w\._\-:]+).*$/, "$1");
 
       // ">" pressed, check for autoclosing the tag
       if (text.match(/^[\w\._\-]+.*?$/)) {
@@ -281,7 +281,7 @@ var cscc = {
     }
 
     text = text.substr(startPos + 1);
-    var tagName = text.replace(/^([\w\._\-]+)[^\/]*$/, "$1");
+    var tagName = text.replace(/^([\w\._\-:]+)[^\/]*$/, "$1");
 
     // see if we have anything to suggest
     var parser = new csccParseXml(text, l.pos - startPos);

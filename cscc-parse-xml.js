@@ -64,7 +64,7 @@ csccParseXml.prototype =
     switch (this.state) {
       case csccParseXml.atStart:
       case csccParseXml.inTagName:
-        if (c.match(/[\w\._\-]/)) {
+        if (c.match(/[\w\._\-:]/)) {
           this.tagName += c;
           this.state = csccParseXml.inTagName;
         }
