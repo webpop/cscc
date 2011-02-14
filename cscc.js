@@ -42,12 +42,12 @@ var cscc = {
 
   // Extend function borrowed from Underscore.js
   // Use external libraries (jQuery, Underscore) if available
-  extend: function(obj, source) {
-    if (typeof _ != "undefined" && _.extend) return _.extend(obj, source);
-    if (typeof $ != "undefined" && $.extend) return $.extend(obj, source);
-    for (var prop in source) obj[prop] = source[prop];
-    return obj;
-  },
+  extend: (typeof _ != "undefined" && _.extend) ? _.extend
+        : (typeof $ != "undefined" && $.extend) ? $.extend
+        : function(obj, source) {
+            for (var prop in source) obj[prop] = source[prop];
+            return obj;
+          },
 
   // creates the CodeMirror instance
   init: function(textareaId, options) {
