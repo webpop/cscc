@@ -1,7 +1,10 @@
  Common Sense Code Completion Enhancements
- 
+
  This is a repository based on Q42 Internet B.V. tool for code completion
- on CodeMirror.
+ on CodeMirror. For screenshots and a detailed description, see our blog
+ post: 
+
+ http://www.webpop.com/blog/posts/common-sense-code-completion-in-webpop
 
  Enhacements included in this repository:
  
