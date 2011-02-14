@@ -13,6 +13,9 @@
    outer tags. For example, you will only get "optgroup" and "option" inside
    a "select". Currently, the only supported tags are "head" (for meta, link,
    style and title) and "select" (for optgroup and option).
+ - Support for displaying a different content in the pulldown. Separate the
+   display text from the actual content with "###" like in:
+   "Google Home Page###http://www.google.com/"
  - Added an additional "options" parameter to the cscc.init function so that
    you can configure the CodeMirror instance.
  - Added an option "dontStyle" so that cscc doesn't add a hardcode <style>

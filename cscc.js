@@ -397,14 +397,27 @@ var cscc = {
     root.innerHTML = "";
     cscc.selected = null;
     var newSelectedEl = null;
+    var hrAdded = false;
 
     // add the items, and take into account the prev selected item
     for (var i = 0; i < items.length; i++) {
       var el = root.ownerDocument.createElement("div");
-      var value = items[i].replace(/\|/, "");
-      el.setAttribute("rel", items[i]);
-      el.innerHTML = value;
-      if (isFont) el.style.fontFamily = value;
+      if (items[i].indexOf("###")>0) {
+        var values = items[i].split("###");
+        el.setAttribute("rel", "###" + values[1]);
+        el.innerHTML = values[0];
+        el.style.fontWeight = "bold";
+        if (!hrAdded && i>0) {
+          var hrel = root.ownerDocument.createElement("hr");
+          root.appendChild(hrel);
+        }
+        hrAdded = true;
+      } else {
+        var value = items[i].replace(/\|/, "");
+        el.setAttribute("rel", items[i]);
+        el.innerHTML = value;
+        if (isFont) el.style.fontFamily = value;
+      }
 
       root.appendChild(el);
       if (!newSelectedEl)
@@ -567,6 +580,11 @@ var cscc = {
       var textOffset = 0; // used for the amount of extra text we insert, like ": "
       if (cursorPos != -1)
         cursorOffset = cursorPos - text.length - 1;
+
+      // Special case when we have the value in the "rel" attribute...
+      if (cscc.selected.getAttribute("rel").indexOf("###") == 0) {
+        text = cscc.selected.getAttribute("rel").substr(3);
+      }
 
       switch (this.currentParser.type) {
         case "css":
