@@ -378,10 +378,11 @@ var cscc = {
     // if cscc is making sense, prepare the result
     if (curSense && typeof curSense == "object") {
       for (var name in curSense) {
-        if (!parser.attributes || parser.attributes[name] == null)
-          if (isOfType(curSense[name], type))
-          if (!fragment || name.toLowerCase().indexOf(fragment.toLowerCase()) == 0)
-          items.push(name);
+        if ((!parser.attributes || parser.attributes[name] == null)
+           && (isOfType(curSense[name], type))
+           && (!fragment || name.toLowerCase().indexOf(fragment.toLowerCase()) == 0)) {
+             items.push(name);
+        }
       }
     }
     return items;
